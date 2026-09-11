@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiểm tra Email</title>
+</head>
+<body>
+    <h2>Kiểm tra tính hợp lệ của Email</h2>
+    <form id="emailForm">
+        <label for="email">Nhập Email:</label>
+        <input type="text" id="email" placeholder="example@gmail.com">
+        <button type="button" onclick="validateEmail()">Kiểm tra</button>
+    </form>
+    <p id="message" style="color: red;"></p>
+
+    <script>
+        function validateEmail() {
+            const emailInput = document.getElementById('email').value.trim();
+            const message = document.getElementById('message');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailInput === "") {
+                message.style.color = "red";
+                message.innerText = "Vui lòng nhập địa chỉ email!";
+            } else if (!emailRegex.test(emailInput)) {
+                message.style.color = "red";
+                message.innerText = "Địa chỉ email không hợp lệ!";
+            } else {
+                message.style.color = "green";
+                message.innerText = "Email hợp lệ!";
+            }
+        }
+    </script>
+</body>
+</html>

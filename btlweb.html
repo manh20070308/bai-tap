@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManhStore - Shop Thời Trang</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: white;
+            color: black;
+        }
+
+        /* header */
+        header {
+            width: 100%;
+            height: 100px;
+            background: gray;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-bottom: 1px solid white;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: red;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        /* Thanh menu ngang: Sản phẩm / Hàng mới / Bán chạy */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 42px;
+            height: 100%;
+        }
+        
+        .nav-item-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .mega-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px black;
+            padding: 25px 30px;
+            gap: 45px;
+            z-index: 150;
+            min-width: 620px;
+        }
+
+        .mega-menu.active {
+            display: flex;
+        }
+
+        .mega-column {
+            min-width: 160px;
+        }
+
+        .mega-column h4 {
+            font-size: 15px;
+            color: #111;
+            border-bottom: 2px solid red;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            white-space: nowrap;
+        }
+
+        .mega-column ul {
+            list-style: none;
+        }
+
+        .mega-column li {
+            padding: 6px 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: gray;
+            cursor: pointer;
+        }
+
+        .mega-column li:hover {
+            color: red;
+        }
+
+        .nav-item {
+            position: relative;
+            color: black;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: red;
+        }
+
+        .arrow {
+            font-size: 18px;
+            margin-left: 3px;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-icon {
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .btn-logout {
+            background: red;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-admin {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #d71920;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-admin:hover {
+            background: #d71920;
+        }
+
+        .cart-box {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-box svg {
+            width: 38px;
+            height: 38px;
+        }
+
+        .cart-number {
+            position: absolute;
+            top: -15px;
+            right: -13px;
+            width: 34px;
+            height: 34px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        /* content */
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        /* tìm kiếm */
+        .search-area {
+            display: none;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .search-area.active {
+            display: flex;
+        }
+
+        .search-area input {
+            flex: 1;
+            max-width: 450px;
+            padding: 12px 15px;
+            border: 1px solid white;
+            border-radius: 5px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-area button {
+            padding: 12px 20px;
+            border: none;
+            background: black;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* sản phẩm */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px black;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.25s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px black;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .category-label {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: white;
+            color: gray;
+            font-size: 12px;
+        }
+
+        .product-card h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .product-card h3:hover {
+            color: red;
+        }
+
+        .price {
+            color: red;
+            font-weight: bold;
+            font-size: 17px;
+            margin: 8px 0 12px;
+        }
+
+        .option-box {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .option-box label {
+            font-size: 14px;
+            color: gray;
+            margin-right: 5px;
+        }
+
+        .option-box select {
+            padding: 6px 10px;
+            border: 1px solid white;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-detail-inline {
+            background: black;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-detail-inline:hover {
+            background: gray
+            ;
+        }
+
+        .btn-detail {
+            background: black;
+            color: white;
+        }
+
+        .btn-detail:hover {
+            background: gray;
+        }
+
+       .btn-add {
+    flex: 1;
+    border: none;
+    padding: 10px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    background: green;
+    color: white;
+}
+
+        .btn-add:hover {
+            background: darkgreen;
+        }
+
+        .no-product {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        /*  ĐĂNG KÝ / ĐĂNG NHẬP  */
+        
+        .register-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 400;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px black;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .register-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .register-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: gray;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid white;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: blue;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: gray;
+        }
+
+        .auth-switch a {
+            color: blue;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /*  CHI TIẾT SẢN PHẨM  */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .detail-box {
+            width: 900px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .detail-close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 30px;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 430px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .detail-info h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .detail-price {
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .detail-info p {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .detail-list {
+            margin: 15px 0;
+            line-height: 1.8;
+            list-style-position: inside;
+        }
+
+        .detail-select {
+            margin: 15px 0;
+        }
+
+        .detail-select select {
+            padding: 10px;
+            min-width: 120px;
+        }
+
+        .detail-add {
+            width: 100%;
+            padding: 13px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /*  GIỎ HÀNG  */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 380px;
+            max-width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 8px black;
+            padding: 20px;
+            z-index: 300;
+            overflow-y: auto;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid white;
+            padding-bottom: 10px;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+            border-bottom: 1px dashed white;
+            padding-bottom: 10px;
+        }
+
+        .cart-item-info {
+            font-size: 14px;
+        }
+
+        .cart-item-size {
+            font-size: 12px;
+            color: gray;
+            margin-top: 4px;
+        }
+
+        .cart-remove {
+            border: none;
+            background: white;
+            padding: 5px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: red;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* BẢNG QUẢN TRỊ (ADMIN) */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .admin-box {
+            width: 950px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 25px 30px;
+            position: relative;
+        }
+
+        .admin-close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 30px;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .admin-box h2 {
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            color: gray;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .admin-stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 18px;
+            border-left: 5px solid red;
+        }
+
+        .admin-stat-card .label {
+            font-size: 13px;
+            color: gray;
+        }
+
+        .admin-stat-card .value {
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 6px;
+        }
+
+        .admin-stat-card.visitors {
+            border-left-color: green;
+        }
+
+        .admin-stat-card.orders {
+            border-left-color: black;
+        }
+
+        .admin-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px 0 10px;
+            border-bottom: 2px solid white;
+            padding-bottom: 6px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .admin-table th, .admin-table td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid white;
+        }
+
+        .admin-table th {
+            background: white;
+        }
+
+        .admin-empty {
+            text-align: center;
+            color: gray;
+            padding: 20px;
+        }
+
+        .admin-reset {
+            margin-top: 20px;
+            background: white;
+            color: red;
+            border: 1px solid red;
+            padding: 8px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .admin-reset:hover {
+            background: red;
+            color: white;
+        }
+/* Biểu đồ % sản phẩm được chọn */
+.chart-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 90px;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.chart-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chart-track {
+    background: #eee;
+    border-radius: 6px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.chart-bar {
+    height: 100%;
+    background: red;
+    border-radius: 6px;
+    transition: width 0.4s;
+}
+
+.chart-bar.top {
+    background: green;
+}
+
+.chart-value {
+    text-align: right;
+    font-weight: bold;
+}
+/* FOOTER LIÊN HỆ */
+.site-footer {
+    background: #222;
+    color: white;
+    margin-top: 50px;
+    padding: 35px 40px 20px;
+}
+
+.footer-content {
+    max-width: 1250px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-col h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid red;
+    padding-bottom: 6px;
+    display: inline-block;
+}
+
+.footer-col p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.8;
+}
+
+.footer-col a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-col a:hover {
+    color: red;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.footer-btn {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.footer-btn.call {
+    background: green;
+}
+
+.footer-btn.mail {
+    background: blue;
+}
+
+.footer-btn.chat {
+    background: red;
+}
+
+.footer-btn:hover {
+    opacity: 0.85;
+    color: white;
+}
+
+.footer-copy {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    margin-top: 25px;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+}
+
+/* KHUNG CHAT VỚI ADMIN */
+.chat-fab {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: red;
+    color: white;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    z-index: 150;
+}
+
+.chat-box {
+    display: none;
+    position: fixed;
+    right: 25px;
+    bottom: 100px;
+    width: 320px;
+    max-width: calc(100% - 30px);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    z-index: 150;
+    overflow: hidden;
+}
+
+.chat-box.active {
+    display: block;
+}
+
+.chat-head {
+    background: red;
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.chat-head span {
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.chat-body {
+    padding: 15px;
+}
+
+.chat-welcome {
+    background: #f1f1f1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.chat-body input,
+.chat-body textarea {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-body textarea {
+    height: 90px;
+    resize: none;
+}
+
+.chat-send {
+    width: 100%;
+    padding: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chat-send:hover {
+    background: darkred;
+}
+/* THÔNG TIN ADMIN */
+.admin-link {
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.admin-link:hover {
+    color: red;
+}
+
+.footer-btn.info {
+    background: #444;
+}
+
+.profile-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 600;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.profile-box {
+    background: white;
+    width: 100%;
+    max-width: 380px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 30px 25px;
+    text-align: center;
+    position: relative;
+}
+
+.profile-close {
+    position: absolute;
+    top: 8px;
+    right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    color: gray;
+}
+
+.profile-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid red;
+    margin-bottom: 15px;
+}
+
+.profile-box h2 {
+    margin-bottom: 4px;
+    color: black;
+}
+
+.profile-role {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.profile-info {
+    text-align: left;
+    list-style: none;
+    border-top: 1px solid #ddd;
+}
+
+.profile-info li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.profile-info li b {
+    display: block;
+    font-size: 12px;
+    color: gray;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+        /* responsive */
+        @media (max-width: 1100px) {
+            .nav-menu {
+                gap: 18px;
+            }
+
+            .nav-item {
+                font-size: 17px;
+            }
+
+            .header-icons {
+                gap: 12px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .mega-menu {
+                min-width: 500px;
+                gap: 25px;
+            }
+        }
+       
+    </style>
+</head>
+
+<body>
+
+    <!-- == HEADER == -->
+    <header>
+        <div class="header-left">
+
+            <div class="logo" onclick="goHome()">ManhStore</div>
+
+            <div class="nav-menu">
+
+                <div class="nav-item-dropdown">
+                    <a href="#" class="nav-item" onclick="toggleProductMenu(); return false;">
+                        Sản phẩm <span class="arrow">⌄</span>
+                    </a>
+
+                    <!-- Menu ngang: Danh mục / Sản phẩm bán chạy / Hàng mới -->
+                    <div class="mega-menu" id="megaMenu">
+
+                        <div class="mega-column">
+                            <h4>Danh Mục Sản Phẩm</h4>
+                            <ul>
+                                <li onclick="selectCategoryFromMenu('Áo Nam')">Áo Nam</li>
+                                <li onclick="selectCategoryFromMenu('Quần Nam')">Quần Nam</li>
+                                <li onclick="selectCategoryFromMenu('Áo Nữ')">Áo Nữ</li>
+                                <li onclick="selectCategoryFromMenu('Váy Nữ')">Váy Nữ</li>
+                            </ul>
+                        </div>
+
+                        <div class="mega-column">
+                            <h4>Sản Phẩm Bán Chạy</h4>
+                            <ul id="menu-bestsellers"></ul>
+                        </div>
+
+                        <div class="mega-column">
+                            <h4>Hàng Mới</h4>
+                            <ul id="menu-newarrivals"></ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <a href="#" class="nav-item" onclick="filterProducts('new'); return false;">
+                    Hàng Mới
+                </a>
+
+                <a href="#" class="nav-item" onclick="filterProducts('hot'); return false;">
+                    Hàng Bán Chạy
+                </a>
+
+            </div>
+        </div>
+
+        <div class="header-icons">
+
+            <!-- Tìm kiếm -->
+            <svg class="header-icon" onclick="focusSearch()" viewBox="0 0 24 24"
+                 fill="none" stroke="black" stroke-width="1.5">
+                <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                <line x1="16" y1="16" x2="22" y2="22"></line>
+            </svg>
+
+            <!-- Khu vực Tài khoản -->
+            <div class="user-box" id="userBox">
+                <svg class="header-icon" id="userIcon" onclick="openLoginModal()" viewBox="0 0 24 24"
+                     fill="none" stroke="black" stroke-width="1.5">
+                    <circle cx="12" cy="7" r="3.5"></circle>
+                    <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+                </svg>
+                <span class="user-name" id="userName"></span>
+                <button class="btn-admin" id="btnAdmin" onclick="openAdminPanel()" style="display:none;">Quản trị</button>
+                <button class="btn-logout" id="btnLogout" onclick="logout()" style="display:none;">Đăng xuất</button>
+            </div>
+
+            <!-- Cửa hàng -->
+            <svg class="header-icon" onclick="alert('ManhStore - Cửa hàng thời trang')" viewBox="0 0 24 24"
+                 fill="none" stroke="black" stroke-width="1.3">
+                <path d="M4 10v10h16V10"></path>
+                <path d="M3 10l2-6h14l2 6"></path>
+                <path d="M3 10c0 2 2 3 4 0 1 3 3 3 5 0 2 3 4 3 5 0 2 3 4 2 4 0"></path>
+                <path d="M9 20v-5h6v5"></path>
+            </svg>
+
+            <!-- Giỏ hàng -->
+            <div class="cart-box" onclick="toggleCart()">
+                <svg viewBox="0 0 24 24"
+                     fill="none" stroke="black" stroke-width="1.5">
+                    <path d="M3 4h2l2 13h11l3-9H6"></path>
+                    <circle cx="10" cy="21" r="1"></circle>
+                    <circle cx="18" cy="21" r="1"></circle>
+                </svg>
+
+                <span class="cart-number" id="cart-count">0</span>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- content -->
+    <div class="container">
+
+        <h2 class="page-title">Sản Phẩm Thời Trang</h2>
+
+        <!-- TÌM KIẾM -->
+        <div class="search-area" id="search-area">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Tìm kiếm sản phẩm..."
+                oninput="searchProducts()"
+            >
+            <button onclick="searchProducts()">Tìm kiếm</button>
+        </div>
+
+        <!-- DANH SÁCH SẢN PHẨM -->
+        <div class="product-grid" id="product-list"></div>
+
+    </div>
+<!-- FOOTER LIÊN HỆ -->
+<footer class="site-footer" id="contact">
+    <div class="footer-content">
+
+        <div class="footer-col">
+            <h4>ManhStore</h4>
+            <p>Shop thời trang nam nữ<br>Chất lượng - Giá tốt - Giao hàng nhanh</p>
+        </div>
+
+        <div class="footer-col">
+<h4>Liên hệ <span class="admin-link" onclick="openAdminProfile()">Admin</span></h4>            <p>
+                Số điện thoại: <a href="tel:0936262702">0936262702</a><br>
+                Email: <a href="mailto:manh080307@gmail.com">manh080307@gmail.com</a>
+            </p>
+            <div class="footer-buttons">
+                <a class="footer-btn call" href="tel:0936262702">Gọi ngay</a>
+                <a class="footer-btn mail" href="mailto:manh080307@gmail.com">Gửi email</a>
+                <button class="footer-btn info" onclick="openAdminProfile()">Xem thông tin Admin</button>
+                <button class="footer-btn chat" onclick="toggleChatBox()">Chat với Admin</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-copy">&copy; 2026 ManhStore. All rights reserved.</div>
+</footer>
+
+<!-- CHAT VỚI ADMIN -->
+<button class="chat-fab" onclick="toggleChatBox()" title="Chat với Admin">💬</button>
+
+<div class="chat-box" id="chatBox">
+    <div class="chat-head">
+    <div>Chat với <span class="admin-link" onclick="openAdminProfile()">Admin</span></div>
+    <span onclick="toggleChatBox()">&times;</span>
+</div>
+    <div class="chat-body">
+        <div class="chat-welcome">
+            Xin chào! Bạn cần hỗ trợ gì? Hãy để lại tin nhắn, admin sẽ phản hồi sớm.
+        </div>
+        <input type="text" id="chatName" placeholder="Tên của bạn">
+        <textarea id="chatMessage" placeholder="Nhập nội dung tin nhắn..."></textarea>
+        <button class="chat-send" onclick="sendChatToAdmin()">Gửi tin nhắn</button>
+    </div>
+</div>
+    <!-- ĐĂNG KÝ -->
+    <div class="register-modal" id="registerModal" onclick="closeRegisterOutside(event)">
+        <div class="register-container">
+            <span class="register-close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Đăng Ký Tài Khoản</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullname">Họ và tên</label>
+                    <input type="text" id="fullname" required placeholder="Nhập họ và tên">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" required placeholder="Nhập số điện thoại" pattern="[0-9]{9,11}">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Địa chỉ nhà</label>
+                    <input type="text" id="address" required placeholder="Nhập địa chỉ nhà">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="Nhập email">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" required placeholder="Nhập tên đăng nhập">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" required placeholder="Nhập mật khẩu">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirmPassword" required placeholder="Nhập lại mật khẩu">
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng ký</button>
+                <div id="message" class="message"></div>
+
+                <p class="auth-switch">
+                    Đã có tài khoản?
+                    <a href="#" onclick="switchToLogin(); return false;">Đăng nhập</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- đăng nhập -->
+    <div class="register-modal" id="loginModal" onclick="closeLoginOutside(event)">
+        <div class="register-container">
+            <span class="register-close" onclick="closeLoginModal()">&times;</span>
+            <h2>Đăng Nhập</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Tên đăng nhập hoặc Email</label>
+                    <input type="text" id="loginUsername" required placeholder="Nhập tên đăng nhập hoặc email">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu">
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng nhập</button>
+                <div id="loginMessage" class="message"></div>
+
+                <p class="auth-switch">
+                    Chưa có tài khoản?
+                    <a href="#" onclick="switchToRegister(); return false;">Đăng ký ngay</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHI TIẾT SẢN PHẨM -->
+    <div class="detail-modal" id="detail-modal" onclick="closeDetailOutside(event)">
+
+        <div class="detail-box">
+
+            <span class="detail-close" onclick="closeDetail()">&times;</span>
+
+            <div class="detail-content">
+
+                <div>
+                    <img id="detail-image" class="detail-image" src="" alt="">
+                </div>
+
+                <div class="detail-info">
+
+                    <h2 id="detail-name"></h2>
+
+                    <div id="detail-price" class="detail-price"></div>
+
+                    <span id="detail-category" class="category-label"></span>
+
+                    <p id="detail-description"></p>
+
+                    <ul class="detail-list">
+                        <li><b>Chất liệu:</b> <span id="detail-material"></span></li>
+                        <li><b>Màu sắc:</b> <span id="detail-color"></span></li>
+                        <li><b>Phân loại:</b> <span id="detail-category-text"></span></li>
+                    </ul>
+
+                    <div class="detail-select">
+                        <label><b>Chọn Size:</b></label>
+                        <select id="detail-size"></select>
+                    </div>
+
+                    <button class="detail-add" onclick="addDetailToCart()">
+                        Thêm vào giỏ hàng
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  GIỎ HÀNG  -->
+    <div class="cart-modal" id="cart-modal">
+
+        <div class="cart-header">
+            <h3>Giỏ hàng của bạn</h3>
+
+            <span class="close-btn" onclick="toggleCart()">
+                &times;
+            </span>
+        </div>
+
+        <div id="cart-items"></div>
+
+        <div class="total">
+            Tổng tiền:
+            <span id="total-price">0</span> đ
+        </div>
+
+        <button class="btn-checkout" onclick="checkout()">
+            Thanh Toán
+        </button>
+
+    </div>
+
+    <!-- ADMIN  -->
+    <div class="admin-modal" id="adminModal" onclick="closeAdminOutside(event)">
+        <div class="admin-box">
+            <span class="admin-close" onclick="closeAdminPanel()">&times;</span>
+
+            <h2>Bảng Quản Trị</h2>
+            <div class="admin-subtitle">Theo dõi dòng tiền và số người đang truy cập ManhStore.</div>
+
+            <div class="admin-stats">
+                <div class="admin-stat-card">
+                    <div class="label">Tổng doanh thu</div>
+                    <div class="value" id="admin-revenue">0 đ</div>
+                </div>
+                <div class="admin-stat-card orders">
+                    <div class="label">Tổng số đơn hàng</div>
+                    <div class="value" id="admin-order-count">0</div>
+                </div>
+                <div class="admin-stat-card visitors">
+                    <div class="label">Người đang truy cập</div>
+                    <div class="value" id="admin-visitors">0</div>
+                </div>
+            </div>
+<div class="admin-section-title">Tỷ lệ sản phẩm được chọn nhiều</div>
+<div id="admin-chart"></div>
+            <div class="admin-section-title">Lịch sử đơn hàng</div>
+            <div id="admin-orders-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Thời gian</th>
+                            <th>Khách hàng</th>
+                            <th>Số sản phẩm</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-body"></tbody>
+                </table>
+            </div>
+
+            <button class="admin-reset" onclick="resetAdminData()">Xóa dữ liệu doanh thu &amp; đơn hàng</button>
+        </div>
+    </div>
+<!-- THÔNG TIN ADMIN -->
+<div class="profile-modal" id="profileModal" onclick="closeAdminProfileOutside(event)">
+    <div class="profile-box">
+        <span class="profile-close" onclick="closeAdminProfile()">&times;</span>
+
+        <img class="profile-avatar" src="anh-admin.jpg" alt="Ảnh Admin">
+        <h2>Nguyễn Quang Mạnh</h2>
+        <div class="profile-role">Admin ManhStore</div>
+
+        <ul class="profile-info">
+            <li><b>Họ tên</b>Nguyễn Quang Mạnh</li>
+            <li><b>Mã sinh viên</b>25003662</li>
+            <li><b>Sở thích</b>Chơi game và đánh cầu lông với bạn bè</li>
+        </ul>
+    </div>
+</div>
+    <script src="./script.js"></script>
+
+</body>
+</html>
